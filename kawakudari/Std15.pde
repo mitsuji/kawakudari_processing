@@ -1,91 +1,98 @@
 
 class Std15 {
 
-  static final int CHAR_SX = 8;
-  static final int CHAR_SY = 8;
+  private static final int CHAR_W = 8;
+  private static final int CHAR_H = 8;
 
-  int screen_sx;
-  int screen_sy;
-  int cb_sx;
-  int cb_sy;
-  int cb_unit;
-  char [] charBuff;
-  int cursor_x;
-  int cursor_y;
+  private float screenW;
+  private float screenH;
+  private int buffW;
+  private int buffH;
+  private char [] buff;
+  private float dotW;
+  private float dotH;
+  private int cursorX;
+  private int cursorY;
 
-  Std15(int screen_sx, int screen_sy, int cb_sx, int cb_sy) {
-    background(0);
-    fill(0xff);
-    noStroke();
-    this.screen_sx = screen_sx;
-    this.screen_sy = screen_sy;
-    this.cb_sx = cb_sx;
-    this.cb_sy = cb_sy;
-    this.cb_unit = screen_sx / cb_sx / CHAR_SX;
-    charBuff = new char[cb_sx*cb_sy];
+  Std15(int screenW, int screenH, int buffW, int buffH) {
+    this.screenW = screenW;
+    this.screenH = screenH;
+    this.buffW = buffW;
+    this.buffH = buffH;
+    buff = new char[buffW * buffH];
+    dotW = screenW / buffW / CHAR_W;
+    dotH = screenH / buffH / CHAR_H;
     cls();
   }
 
-  void locate (int x, int y) {
-    cursor_x = x;
-    cursor_y = y;
+  public void locate (int x, int y) {
+    cursorX = x;
+    cursorY = y;
   }
 
-  void putc(char c) {
-    putc(cursor_x, cursor_y, c);
+  public void putc(char c) {
+    setChar(cursorX, cursorY, c);
   }
 
-  void putc(int x, int y, char c) {
-    charBuff [y*cb_sx+x] = c;
+  public char scr(int x, int y) {
+    return buff [y*buffW+x];
   }
 
-  char scr(int x, int y) {
-    return charBuff [y*cb_sx+x];
-  }
-
-  void cls () {
-    for (int y = 0; y < cb_sy; ++y) {
-      for (int x = 0; x < cb_sx; ++x) {
-        charBuff [y*cb_sx+x] = '\0';
+  public void cls () {
+    for (int y = 0; y < buffH; y++) {
+      for (int x = 0; x < buffW; x++) {
+        setChar(x,y,'\0');
       }
     }
   }
 
-  void scroll() {
-    for (int y = 0; y < cb_sy; ++y) {
-      for (int x = 0; x < cb_sx; ++x ) {
-        if (y == cb_sy-1) {
-          charBuff [y*cb_sx+x] = '\0';
+  public void scroll() {
+    for (int y = 0; y < buffH; y++) {
+      for (int x = 0; x < buffW; x++ ) {
+        if (y == buffH-1) {
+          setChar(x,y,'\0');
         } else {
-          charBuff [y*cb_sx+x] = charBuff [(y+1)*cb_sx+x];
+          setChar(x,y,scr(x,y+1));
         }
       }
     }
   }
 
-  void mapchar(int cx, int cy, char c) {
-    // [memo] '\0' == 0 -> char of blank
-    long font = FONTS[c];
-    for (int y = 0; y < CHAR_SY; ++y) {
-      long line = (font >> ((CHAR_SY-y-1)*CHAR_SX)) & 0xff;
-      for (int x= 0; x < CHAR_SX; ++x) {
-        if (((line >> (CHAR_SX-x-1)) & 0x1) == 0x1) {
-          rect((cx*8+x)*cb_unit, (cy*8+y)*cb_unit, cb_unit, cb_unit);
+  private void setChar(int x, int y, char c) {
+    buff [y*buffW+x] = c;
+  }
+
+  private void drawChar(int x, int y, char c) {
+    long glyph = ICHIGOJAM_FONT[c];
+    for (int cy = 0; cy < CHAR_H; cy++) {
+      long line = (glyph >> ((CHAR_H-cy-1)*CHAR_W)) & 0xff;
+      for (int cx= 0; cx < CHAR_W; cx++) {
+        if (((line >> (CHAR_W-cx-1)) & 0x1) == 0x1) {
+          fill(0xff);
+          noStroke();
+          rect((x*CHAR_W+cx)*dotW, (y*CHAR_H+cy)*dotH, dotW, dotH);
         }
       }
     }
   }
 
-  void PAppletDraw() {
+  public void drawScreen() {
+    background(0);
     clear();
-    for (int y = 0; y < cb_sy; ++y) {
-      for (int x = 0; x < cb_sx; ++x) {
-        mapchar(x, y, charBuff [y*cb_sx+x]);
+    for (int y = 0; y < buffH; y++) {
+      for (int x = 0; x < buffW; x++) {
+        drawChar(x, y, scr(x,y));
       }
     }
   }
 
-  final long [] FONTS = {
+
+/**
+ *
+ *  https://mitsuji.github.io/ichigojam-font.json/
+ *
+ */
+  private final long [] ICHIGOJAM_FONT = {
     0x0000000000000000L, 
     0xffffffffffffffffL, 
     0xffaaff55ffaaff55L, 

@@ -25,10 +25,9 @@ void draw () {
 
     std15.scroll();
 
-    if (std15.scr(x, 5)!='\0') {
-      running = false;
-    }
+    if (std15.scr(x, 5)!='\0') running = false;
+
   }
-  //  delay(100);
-  std15.PAppletDraw();
+  std15.drawScreen();
+
 }
