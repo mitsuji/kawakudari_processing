@@ -32,6 +32,24 @@ class Std15 {
 
   public void putc(char c) {
     setChar(cursorX, cursorY, c);
+    if(cursorX < buffW-1) {
+      cursorX ++;
+    } else {
+      if(cursorY < buffH-1) {
+        cursorX = 0;
+        cursorY ++;
+      }
+    }
+  }
+
+  public void putstr(String s) {
+    for(int i = 0; i < s.length(); i++) {
+      putc(s.charAt(i));
+    }
+  }
+
+  public void putnum(int n) {
+    putstr(String.valueOf(n));
   }
 
   public char scr(int x, int y) {

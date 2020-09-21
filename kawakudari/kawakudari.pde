@@ -25,7 +25,12 @@ void draw () {
 
     std15.scroll();
 
-    if (std15.scr(x, 5)!='\0') running = false;
+    if (std15.scr(x, 5)!='\0') {
+      std15.locate(0,23);
+      std15.putstr("Game Over...");
+      std15.putnum(frameCount);
+      running = false;
+    }
 
   }
   std15.drawScreen();
