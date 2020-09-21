@@ -17,13 +17,11 @@ void draw () {
       if (keyCode == LEFT)  --x;
       if (keyCode == RIGHT) ++x;
     }
-
     std15.locate(x, 5);
     std15.putc('0');
     std15.locate(floor(random(32)), 23);
     std15.putc('*');
-
-    std15.scroll();
+    std15.scroll(Std15.UP);
 
     if (std15.scr(x, 5)!='\0') {
       std15.locate(0,23);
@@ -31,7 +29,6 @@ void draw () {
       std15.putnum(frameCount);
       running = false;
     }
-
   }
   std15.drawScreen();
 
