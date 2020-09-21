@@ -141,6 +141,7 @@ class Std15 {
 
 /**
  *
+ *  CC BY IchigoJam & mitsuji.org
  *  https://mitsuji.github.io/ichigojam-font.json/
  *
  */
