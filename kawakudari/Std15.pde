@@ -1,6 +1,11 @@
 
 class Std15 {
 
+  public static final int UP = 0;
+  public static final int RIGHT = 1;
+  public static final int DOWN = 2;
+  public static final int LEFT = 3;
+
   private static final int CHAR_W = 8;
   private static final int CHAR_H = 8;
 
@@ -64,13 +69,42 @@ class Std15 {
     }
   }
 
-  public void scroll() {
+  public void scroll(int dir) {
     for (int y = 0; y < buffH; y++) {
       for (int x = 0; x < buffW; x++ ) {
-        if (y == buffH-1) {
-          setChar(x,y,'\0');
-        } else {
-          setChar(x,y,scr(x,y+1));
+        switch(dir) {
+          case UP: {
+          if (y == buffH-1) {
+            setChar(x,y,'\0');
+          } else {
+            setChar(x,y,scr(x,y+1));
+          }
+          }
+          break;
+          case RIGHT: {
+          if (x == buffW-1) {
+            setChar(buffW-x-1,y,'\0');
+          } else {
+            setChar(buffW-x-1,y,scr((buffW-x-1)-1,y));
+          }
+          }
+          break;
+          case DOWN: {
+          if (y == buffH-1) {
+            setChar(x,(buffH-y-1),'\0');
+          } else {
+            setChar(x,(buffH-y-1),scr(x,(buffH-y-1)-1));
+          }
+          }
+          break;
+          case LEFT: {
+          if (x == buffW-1) {
+            setChar(x,y,'\0');
+          } else {
+            setChar(x,y,scr(x+1,y));
+          }
+          }
+          break;
         }
       }
     }
