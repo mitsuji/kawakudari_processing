@@ -110,6 +110,32 @@ class Std15 {
     }
   }
 
+  public void pset(int x, int y) {
+    int cx = x / 2;
+    int cy = y / 2;
+    char c = scr(cx,cy);
+
+    int tx = x % 2;
+    int ty = y % 2;
+    char b;
+    if (ty == 0 && tx == 0) {
+      b = 1;
+    } else if (ty == 0 && tx != 0 ) {
+      b = 2;
+    } else if (ty != 0 && tx == 0) {
+      b = 4;
+    } else {
+      b = 8;
+    }
+
+    if((c & 0xf0) == 0x80){
+      setChar(cx, cy, (char)(c | b));
+    }else{
+      setChar(cx, cy, (char)(0x80|b));
+    }
+
+  }
+
   private void setChar(int x, int y, char c) {
     buff [y*buffW+x] = c;
   }
